@@ -9,6 +9,7 @@
           :[value.valueProp]="value.value"
           :value="value.value"
           v-bind="value.extraProps"
+          v-on="value.events"
         >
           <template v-if="value.options">
             <component
@@ -17,7 +18,7 @@
               :key="k"
               :value="option.value"
             >
-              {{ option.text }}
+              <render-vnode :vNode="option.text"></render-vnode>
             </component>
           </template>
         </component>
@@ -30,8 +31,24 @@
 import type { TextComponentProps } from "@/defaultProps";
 import { defineComponent, computed } from "vue";
 import { reduce } from "lodash-es";
-import { type PropsToForms, mapPropsToForms } from "@/propsMap";
-import type { PropType } from "vue";
+import { mapPropsToForms } from "@/propsMap";
+import type { PropType, VNode } from "vue";
+import RenderVnode from "./RenderVnode";
+interface FormProps {
+  component: string;
+  subComponent?: string;
+  extraProps?: {
+    [key: string]: any;
+  };
+  text?: string;
+  options?: { text: string | VNode; value: any }[];
+  // 转换函数
+  initalTransform?: (v: any) => any;
+  valueProp?: string;
+  eventName?: string;
+  events: { [key: string]: (e: any) => void };
+  value: string;
+}
 export default defineComponent({
   name: "props-table",
   props: {
@@ -39,7 +56,11 @@ export default defineComponent({
       type: Object as PropType<TextComponentProps>,
     },
   },
-  setup(props) {
+  components: {
+    RenderVnode,
+  },
+  emits: ["change"],
+  setup(props, context) {
     const finalProps = computed(() => {
       return reduce(
         props.props,
@@ -47,15 +68,31 @@ export default defineComponent({
           const newKey = key as keyof TextComponentProps;
           const item = mapPropsToForms[newKey];
           if (item) {
-            item.value = item.initalTransform
-              ? item.initalTransform(value)
-              : value;
-            item.valueProp = item.valueProp ? item.valueProp : "value";
-            result[newKey] = item;
+            const {
+              valueProp = "value",
+              eventName = "change",
+              initalTransform,
+              afterTransform,
+            } = item;
+            const newItem: FormProps = {
+              ...item,
+              value: initalTransform ? initalTransform(value) : value,
+              valueProp,
+              eventName,
+              events: {
+                [eventName]: (e: any) => {
+                  context.emit("change", {
+                    key,
+                    value: afterTransform ? afterTransform(e) : e,
+                  });
+                },
+              },
+            };
+            result[newKey] = newItem;
           }
           return result;
         },
-        {} as Required<PropsToForms>
+        {} as { [key: string]: FormProps }
       );
     });
 

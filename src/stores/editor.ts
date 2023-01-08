@@ -71,6 +71,14 @@ export const useEditor = defineStore("editor", {
     setActive(currentId: string) {
       this.currentElement = currentId;
     },
+    updateComponent({ key, value }) {
+      const updateComponent = this.components.find(
+        (component) => component.id === this.currentElement
+      );
+      if (updateComponent) {
+        updateComponent.props[key as keyof TextComponentProps] = value;
+      }
+    },
   },
   getters: {
     getCurrentElement: (state) => {
