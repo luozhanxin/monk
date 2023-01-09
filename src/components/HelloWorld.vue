@@ -1,6 +1,11 @@
 <template>
   <h1>{{ msg }}</h1>
-  <button @click="count++">{{ count }}</button>
+  <button @click="setCount">{{ count }}</button>
+  <input type="text" v-model="todo" />
+  <button class="addTodo" @click="addTodo">add</button>
+  <ul>
+    <li v-for="(todo, index) in todos" :key="index">{{ todo }}</li>
+  </ul>
   <hello msg="1234"></hello>
 </template>
 <script lang="ts">
@@ -11,13 +16,29 @@ export default defineComponent({
   props: {
     msg: String,
   },
+  emits: ["send"],
   components: {
     Hello,
   },
-  setup() {
-    const count = ref(0);
+  setup(props, context) {
+    const count = ref(1);
+    const todos = ref([]);
+    const todo = ref("");
+    const setCount = () => {
+      count.value++;
+    };
+    const addTodo = () => {
+      if (todo.value) {
+        todos.value.push(todo.value);
+        context.emit("send", todo.value);
+      }
+    };
     return {
       count,
+      todo,
+      todos,
+      setCount,
+      addTodo,
     };
   },
 });
