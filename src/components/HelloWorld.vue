@@ -54,6 +54,7 @@ export default defineComponent({
         })
         .catch(() => {
           user.error = true;
+          user.loading = false;
         });
     };
     return {

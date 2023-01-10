@@ -1,11 +1,18 @@
-import { describe, it, expect, vi } from "vitest";
-import { shallowMount, flushPromises } from "@vue/test-utils";
+import { describe, it, expect, vi, beforeAll, afterEach } from "vitest";
+import { shallowMount, flushPromises, VueWrapper } from "@vue/test-utils";
 import HelloWorld from "@/components/HelloWorld.vue";
 import Hello from "@/components/Hello.vue";
 import axios from "axios";
 vi.mock("axios");
+const msg = "new message";
+let wrapper: VueWrapper<any>;
 
 describe("HelloWorld", () => {
+  beforeAll(() => {
+    wrapper = shallowMount(HelloWorld, {
+      props: { msg },
+    });
+  });
   it("renders properly", () => {
     const wrapper = shallowMount(HelloWorld, {
       props: { msg: "Hello" },
@@ -15,21 +22,13 @@ describe("HelloWorld", () => {
   });
 
   it("should update thte count when clicking the button", async () => {
-    const msg = "new message";
-    const wrapper = shallowMount(HelloWorld, {
-      prop: { msg },
-    });
     // DOM 异步过程
     await wrapper.get("button").trigger("click");
     expect(wrapper.get("button").text()).toBe("2");
   });
 
   it("should add todo when fill the input and click the add button", async () => {
-    const msg = "new message";
     const todoContent = "buy milk";
-    const wrapper = shallowMount(HelloWorld, {
-      props: { msg },
-    });
     await wrapper.get("input").setValue(todoContent);
     expect(wrapper.get("input").element.value).toBe(todoContent);
     await wrapper.get(".addTodo").trigger("click");
@@ -41,11 +40,7 @@ describe("HelloWorld", () => {
   });
 
   // only 只执行这个测试
-  it.only("should load user message when click the load button", async () => {
-    const msg = "new message";
-    const wrapper = shallowMount(HelloWorld, {
-      props: { msg },
-    });
+  it("should load user message when click the load button", async () => {
     axios.get.mockResolvedValueOnce({ data: { username: "viking" } });
     await wrapper.get(".loadUser").trigger("click");
     expect(axios.get).toHaveBeenCalled();
@@ -54,5 +49,18 @@ describe("HelloWorld", () => {
     // 界面更新完毕
     expect(wrapper.find(".loading").exists()).toBeFalsy();
     expect(wrapper.get(".userName").text()).toBe("viking");
+  });
+
+  it("should load error when return promise reject", async () => {
+    axios.get.mockRejectedValueOnce("error");
+    await wrapper.get(".loadUser").trigger("click");
+    expect(axios.get).toHaveBeenCalledTimes(1);
+    await flushPromises();
+    expect(wrapper.find(".loading").exists()).toBe(false);
+    expect(wrapper.find(".error").exists()).toBe(true);
+  });
+
+  afterEach(() => {
+    axios.get.mockReset();
   });
 });
