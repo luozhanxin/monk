@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.app.json",
-  "exclude": ["src/**/tests/unit/*"],
+  "exclude": ["src/**/tests/unit/*.spec.ts"],
   "compilerOptions": {
     "composite": true,
     "lib": [],

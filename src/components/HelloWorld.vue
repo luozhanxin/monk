@@ -17,6 +17,8 @@
 import { defineComponent, ref, reactive } from "vue";
 import axios from "axios";
 import Hello from "./Hello.vue";
+import { useCounterStore } from "@/stores/counter";
+import { message } from "ant-design-vue";
 export default defineComponent({
   name: "HelloWorld",
   props: {
@@ -27,6 +29,7 @@ export default defineComponent({
     Hello,
   },
   setup(props, context) {
+    const store = useCounterStore();
     const count = ref(1);
     const todos = ref<string[]>([]);
     const todo = ref("");
@@ -52,6 +55,8 @@ export default defineComponent({
           console.log(resp);
           user.data = resp.data;
           user.loading = false;
+          message.success("success");
+          store.increment();
         })
         .catch(() => {
           user.error = true;
