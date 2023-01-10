@@ -1,23 +1,36 @@
 import { describe, it, expect, vi, beforeAll, afterEach } from "vitest";
-import { shallowMount, flushPromises, VueWrapper } from "@vue/test-utils";
+import { flushPromises, VueWrapper, mount } from "@vue/test-utils";
 import HelloWorld from "@/components/HelloWorld.vue";
 import Hello from "@/components/Hello.vue";
 import axios from "axios";
 vi.mock("axios");
+vi.mock("ant-design-vue");
 const msg = "new message";
 let wrapper: VueWrapper<any>;
+const mockComponent = {
+  template: "<div><slot></slot></div>",
+};
+const mockComponent2 = {
+  template: "<div><slot></slot><slot name ='overlay'></slot></div>",
+};
+
+const globalCompoents = {
+  "a-button": mockComponent,
+  "route-link": mockComponent,
+  "a-dropdown-button": mockComponent2,
+};
 
 describe("HelloWorld", () => {
   beforeAll(() => {
-    wrapper = shallowMount(HelloWorld, {
+    wrapper = mount(HelloWorld, {
       props: { msg },
+      global: {
+        components: globalCompoents,
+      },
     });
   });
   it("renders properly", () => {
-    const wrapper = shallowMount(HelloWorld, {
-      props: { msg: "Hello" },
-    });
-    expect(wrapper.text()).toContain("Hello");
+    expect(wrapper.text()).toContain("new message");
     expect(wrapper.findComponent(Hello).exists()).toBeTruthy();
   });
 

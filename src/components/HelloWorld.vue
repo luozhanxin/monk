@@ -11,6 +11,7 @@
   <div v-else class="userName">{{ user.data && user.data.username }}</div>
   <p v-if="user.error" class="error">error!</p>
   <hello msg="1234"></hello>
+  <a-button @click="count++">test</a-button>
 </template>
 <script lang="ts">
 import { defineComponent, ref, reactive } from "vue";
