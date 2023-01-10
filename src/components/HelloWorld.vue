@@ -6,10 +6,15 @@
   <ul>
     <li v-for="(todo, index) in todos" :key="index">{{ todo }}</li>
   </ul>
+  <button class="loadUser" @click="loadUser">load</button>
+  <p v-if="user.loading" class="loading">Loading</p>
+  <div v-else class="userName">{{ user.data && user.data.username }}</div>
+  <p v-if="user.error" class="error">error!</p>
   <hello msg="1234"></hello>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, reactive } from "vue";
+import axios from "axios";
 import Hello from "./Hello.vue";
 export default defineComponent({
   name: "HelloWorld",
@@ -22,8 +27,13 @@ export default defineComponent({
   },
   setup(props, context) {
     const count = ref(1);
-    const todos = ref([]);
+    const todos = ref<string[]>([]);
     const todo = ref("");
+    const user = reactive({
+      data: null as any,
+      loading: false,
+      error: false,
+    });
     const setCount = () => {
       count.value++;
     };
@@ -33,12 +43,27 @@ export default defineComponent({
         context.emit("send", todo.value);
       }
     };
+    const loadUser = () => {
+      user.loading = true;
+      axios
+        .get("Https://jsonplaceholder.typicode.com/users/1")
+        .then((resp) => {
+          console.log(resp);
+          user.data = resp.data;
+          user.loading = false;
+        })
+        .catch(() => {
+          user.error = true;
+        });
+    };
     return {
       count,
       todo,
       todos,
+      user,
       setCount,
       addTodo,
+      loadUser,
     };
   },
 });
