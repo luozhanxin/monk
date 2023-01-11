@@ -34,6 +34,7 @@ import { reduce } from "lodash-es";
 import { mapPropsToForms } from "@/propsMap";
 import type { PropType, VNode } from "vue";
 import RenderVnode from "./RenderVnode";
+import ColorPicker from "./ColorPicker.vue";
 interface FormProps {
   component: string;
   subComponent?: string;
@@ -58,6 +59,7 @@ export default defineComponent({
   },
   components: {
     RenderVnode,
+    ColorPicker,
   },
   emits: ["change"],
   setup(props, context) {
