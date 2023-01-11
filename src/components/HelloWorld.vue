@@ -53,10 +53,10 @@ export default defineComponent({
         .get("Https://jsonplaceholder.typicode.com/users/1")
         .then((resp) => {
           console.log(resp);
+          store.increment();
           user.data = resp.data;
           user.loading = false;
           message.success("success");
-          store.increment();
         })
         .catch(() => {
           user.error = true;
