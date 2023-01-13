@@ -1,6 +1,11 @@
 <template>
   <div class="file-upload">
-    <div class="upload-area" @click="triggerUpload" :disabled="isUploading">
+    <div
+      class="upload-area"
+      v-on="events"
+      :disabled="isUploading"
+      :class="{ 'is-dragover': drag && isDragOver }"
+    >
       <slot v-if="isUploading" name="loading"
         ><button disabled>正在上传</button></slot
       >
@@ -77,6 +82,7 @@ export default defineComponent({
   setup(props) {
     const fileInput = ref<null | HTMLInputElement>(null);
     const uploadedFiles = ref<UploadFile[]>([]);
+    const isDragOver = ref(false);
     const isUploading = computed(() => {
       return uploadedFiles.value.some((file) => file.status === "loading");
     });
@@ -130,9 +136,7 @@ export default defineComponent({
           }
         });
     };
-    const handleFileChange = (e: Event) => {
-      const target = e.target as HTMLInputElement;
-      const files = target.files;
+    const uploadFiles = (files: null | FileList) => {
       if (files) {
         const uploadedFile = files[0];
         if (props.beforeUpload) {
@@ -159,14 +163,47 @@ export default defineComponent({
         }
       }
     };
+    let events: { [key: string]: (e: any) => void } = {
+      click: triggerUpload,
+    };
+    const handleFileChange = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      uploadFiles(target.files);
+    };
+    const handleDrag = (e: DragEvent, over: boolean) => {
+      e.preventDefault();
+      isDragOver.value = over;
+    };
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      isDragOver.value = false;
+      if (e.dataTransfer) {
+        uploadFiles(e.dataTransfer.files);
+      }
+    };
+    if (props.drag) {
+      events = {
+        ...events,
+        dragover: (e: DragEvent) => {
+          handleDrag(e, true);
+        },
+        dragleave: (e: DragEvent) => {
+          handleDrag(e, false);
+        },
+        drop: handleDrop,
+      };
+    }
     return {
       fileInput,
       isUploading,
       uploadedFiles,
       lastFileData,
+      isDragOver,
+      events,
       triggerUpload,
       removeFile,
       handleFileChange,
+      handleDrag,
     };
   },
 });
@@ -200,6 +237,10 @@ export default defineComponent({
   border-radius: 4px;
   min-width: 200px;
   position: relative;
+}
+.is-dragover {
+  border: 2px dashed #1890ff;
+  background: rgb(#1890ff, 0.2);
 }
 
 .upload-list > li:first-child {
