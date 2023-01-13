@@ -18,6 +18,7 @@ import MText from "./MText.vue";
 import { imageDefaultProps } from "@/defaultProps";
 import type { UploadResp } from "@/extraType";
 import { message } from "ant-design-vue";
+import { getImageDimensions } from "@/help";
 
 export default defineComponent({
   name: "components-list",
@@ -50,7 +51,11 @@ export default defineComponent({
       };
       message.success("上传成功");
       componentData.props.src = resp.data.url;
-      context.emit("on-item-click", resp);
+      getImageDimensions(resp.data.url).then(({ width }) => {
+        const maxWidth = 373;
+        componentData.props.width = width > maxWidth ? maxWidth : width;
+        context.emit("on-item-click", resp);
+      });
     };
     return {
       onItemClick,
