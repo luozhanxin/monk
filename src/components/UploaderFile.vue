@@ -24,7 +24,7 @@
       :style="{ display: 'none' }"
       @change="handleFileChange"
     />
-    <ul :class="`upload-list upload-list-${listType}`">
+    <ul :class="`upload-list upload-list-${listType}`" v-if="showUploadList">
       <li
         :class="`uploaded-file upload-${file.status}`"
         v-for="file in filesList"
@@ -73,6 +73,10 @@ export default defineComponent({
     action: {
       type: String,
       required: true,
+    },
+    showUploadList: {
+      type: Boolean,
+      default: true,
     },
     beforeUpload: {
       type: Function as PropType<CheckUpload>,
