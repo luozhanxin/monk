@@ -30,6 +30,12 @@
         v-for="file in filesList"
         :key="file.uid"
       >
+        <img
+          v-if="file.url && listType === 'picture'"
+          class="upload-list-thumbnail"
+          :src="file.url"
+          :alt="file.name"
+        />
         <span v-if="file.status === 'loading'"><LoadingOutlined /></span>
         <span v-else class="file-icon"><FileOutlined /></span>
         <span class="filename">{{ file.name }}</span>
@@ -52,6 +58,7 @@ import { v4 as uuidv4 } from "uuid";
 import { last } from "lodash-es";
 type UploadStatus = "ready" | "loading" | "success" | "error";
 type CheckUpload = (file: File) => boolean | Promise<File>;
+type FileListType = "picture" | "text";
 export interface UploadFile {
   uid: string;
   size: number;
@@ -59,6 +66,7 @@ export interface UploadFile {
   status: UploadStatus;
   raw: File;
   resp?: any;
+  url?: string;
 }
 export default defineComponent({
   props: {
@@ -76,6 +84,10 @@ export default defineComponent({
     autoUpload: {
       type: Boolean,
       default: true,
+    },
+    listType: {
+      type: String as PropType<FileListType>,
+      default: "text",
     },
   },
   components: {
@@ -140,6 +152,18 @@ export default defineComponent({
         status: "ready",
         raw: uploadedFile,
       });
+      if (props.listType === "picture") {
+        //try {
+        //  fileObj.url = URL.createObjectURL(uploadedFile);
+        //} catch (err) {
+        //  console.error("upload File error", err);
+        //}
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(uploadedFile);
+        fileReader.addEventListener("load", () => {
+          fileObj.url = fileReader.result as string;
+        });
+      }
       filesList.value.push(fileObj);
       if (props.autoUpload) {
         postFile(fileObj);
@@ -260,5 +284,9 @@ export default defineComponent({
 
 .upload-list > li:first-child {
   margin-top: 10px;
+}
+.upload-list-thumbnail {
+  width: 80px;
+  height: 80px;
 }
 </style>

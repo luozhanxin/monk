@@ -2,7 +2,11 @@
   <a-layout :style="{ background: '#fff' }">
     <header-layout></header-layout>
     <a-layout-content class="main-layout">
-      <uploader-file action="`http://local.test:7001/api/upload`" drag>
+      <uploader-file
+        action="`http://local.test:7001/api/upload`"
+        drag
+        listType="picture"
+      >
         <div class="uploader-container">
           <h4>上传图片</h4>
         </div>
