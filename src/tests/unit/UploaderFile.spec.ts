@@ -213,6 +213,27 @@ describe("UploaderFile Component", () => {
     await flushPromises();
     expect(firstItem.classes()).toContain("upload-success");
   });
+  it("PictureList mode should works fine", async () => {
+    mockAxios.post.mockResolvedValueOnce({ data: { url: "dummy.url" } });
+    window.URL.createObjectURL = vi.fn(() => {
+      return "test.url";
+    });
+    const wrapper = mount(UploaderFile, {
+      props: {
+        action: "test.url",
+        listType: "picture",
+      },
+    });
+    expect(wrapper.get("ul").classes()).toContain("upload-list-picture");
+    const fileInput = wrapper.get("input").element as HTMLInputElement;
+    setInputValue(fileInput);
+    await wrapper.get("input").trigger("change");
+    await flushPromises();
+    expect(wrapper.findAll("li").length).toBe(1);
+    expect(wrapper.find("li:first-child img").exists()).toBeTruthy();
+    const firstImg = wrapper.get("li:first-child img");
+    expect(firstImg.attributes("src")).toEqual("test.url");
+  });
   afterEach(() => {
     mockAxios.post.mockReset();
   });

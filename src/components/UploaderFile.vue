@@ -24,7 +24,7 @@
       :style="{ display: 'none' }"
       @change="handleFileChange"
     />
-    <ul class="upload-list">
+    <ul :class="`upload-list upload-list-${listType}`">
       <li
         :class="`uploaded-file upload-${file.status}`"
         v-for="file in filesList"
@@ -153,16 +153,16 @@ export default defineComponent({
         raw: uploadedFile,
       });
       if (props.listType === "picture") {
-        //try {
-        //  fileObj.url = URL.createObjectURL(uploadedFile);
-        //} catch (err) {
-        //  console.error("upload File error", err);
-        //}
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(uploadedFile);
-        fileReader.addEventListener("load", () => {
-          fileObj.url = fileReader.result as string;
-        });
+        try {
+          fileObj.url = URL.createObjectURL(uploadedFile);
+        } catch (err) {
+          console.error("upload File error", err);
+        }
+        //const fileReader = new FileReader();
+        //fileReader.readAsDataURL(uploadedFile);
+        //fileReader.addEventListener("load", () => {
+        //  fileObj.url = fileReader.result as string;
+        //});
       }
       filesList.value.push(fileObj);
       if (props.autoUpload) {
