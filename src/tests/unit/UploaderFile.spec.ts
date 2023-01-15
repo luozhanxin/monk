@@ -137,7 +137,7 @@ describe("UploaderFile Component", () => {
   });
   it("before upload check using Promise", async () => {
     mockAxios.post.mockResolvedValueOnce({ data: { url: "dummy.url" } });
-    const failedPromise = (file: File) => {
+    const failedPromise = () => {
       return Promise.reject("wrong type");
     };
     const successPromise = (file: File) => {
