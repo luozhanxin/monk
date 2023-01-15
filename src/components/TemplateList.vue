@@ -1,9 +1,9 @@
 <template>
   <div class="template-list-component">
     <a-row :gutter="16">
-      <a-col :span="6" v-for="item in list">
+      <a-col :span="6" v-for="item in list" :key="item">
         <a-card hoverable>
-          <template v-solt:cover> </template>
+          <template v-solt:cover>{{ item }} </template>
         </a-card>
       </a-col>
     </a-row>
