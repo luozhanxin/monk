@@ -60,13 +60,8 @@ export const useEditor = defineStore("editor", {
     currentElement: "",
   }),
   actions: {
-    addComponent(props: Partial<TextComponentProps>) {
-      const newComponent: ComponentData = {
-        id: uuidv4(),
-        name: "m-text",
-        props,
-      };
-      this.components.push(newComponent);
+    addComponent(component: ComponentData) {
+      this.components.push(component);
     },
     setActive(currentId: string) {
       this.currentElement = currentId;

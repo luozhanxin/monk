@@ -7,6 +7,7 @@
           :list="defaultTextTemplates"
           @onItemClick="addItem"
         ></components-list>
+        <style-uploader></style-uploader>
       </div>
     </a-layout-sider>
     <a-layout style="padding: 0 24px 24px">
@@ -49,19 +50,21 @@ import MText from "@/components/MText.vue";
 import PropsTable from "@/components/PropsTable.vue";
 import ComponentsList from "@/components/ComponentsList.vue";
 import { defaultTextTemplates } from "@/defaultTemplates";
+import StyleUploader from "@/components/StyleUploader.vue";
 export default defineComponent({
   components: {
     MText,
     ComponentsList,
     EditWrapper,
     PropsTable,
+    StyleUploader,
   },
   setup() {
     const store = useEditor();
     const components = computed(() => store.components);
     const currentElement = computed<any>(() => store.getCurrentElement);
-    const addItem = (props: any) => {
-      store.addComponent(props);
+    const addItem = (component: any) => {
+      store.addComponent(component);
     };
     const setActive = (id: string) => {
       store.setActive(id);

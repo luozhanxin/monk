@@ -19,7 +19,5 @@ export default defineComponent({
     HeaderLayout,
     FooterLayout,
   },
-  setup() {
-  }
 });
 </script>
