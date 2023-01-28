@@ -28,13 +28,14 @@
 </template>
 
 <script lang="ts">
-import type { TextComponentProps } from "@/defaultProps";
+import type { TextComponentProps } from "monk-components";
 import { defineComponent, computed } from "vue";
 import { reduce } from "lodash-es";
 import { mapPropsToForms } from "@/propsMap";
 import type { PropType, VNode } from "vue";
 import RenderVnode from "./RenderVnode";
 import ColorPicker from "./ColorPicker.vue";
+import ImageProcess from "./ImageProcess.vue";
 interface FormProps {
   component: string;
   subComponent?: string;
@@ -60,6 +61,7 @@ export default defineComponent({
   components: {
     RenderVnode,
     ColorPicker,
+    ImageProcess,
   },
   emits: ["change"],
   setup(props, context) {

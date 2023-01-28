@@ -14,11 +14,10 @@
 import { defineComponent } from "vue";
 import type { ComponentData } from "@/stores/editor";
 import { v4 as uuidv4 } from "uuid";
-import MText from "./MText.vue";
-import { imageDefaultProps } from "@/defaultProps";
+import { imageDefaultProps } from "monk-components";
 import type { UploadResp } from "@/extraType";
 import { message } from "ant-design-vue";
-import { getImageDimensions } from "@/help";
+import { getImageDimensions } from "@/helper";
 
 export default defineComponent({
   name: "components-list",
@@ -29,9 +28,7 @@ export default defineComponent({
     },
   },
   emits: ["on-item-click"],
-  components: {
-    MText,
-  },
+  components: {},
   setup(props, context) {
     const onItemClick = (props: any) => {
       const componentData: ComponentData = {
