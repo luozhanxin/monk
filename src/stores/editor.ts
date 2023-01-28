@@ -1,11 +1,32 @@
 import { v4 as uuidv4 } from "uuid";
 import { defineStore } from "pinia";
-import type { TextComponentProps, ImageComponentProps } from "monk-components";
+import {
+  type TextComponentProps,
+  type ImageComponentProps,
+  textDefaultProps,
+  imageDefaultProps,
+  type AllComponentProps,
+} from "monk-components";
 export interface EditorProps {
   // 页面所有组件
   components: ComponentData[];
   // 当前被选中的组件 id
   currentElement: string;
+  page: PageData;
+}
+
+export interface PageProps {
+  backgroundColor: string;
+  backgroundImage: string;
+  backgroundRepeat: string;
+  backgroundSize: string;
+  height: string;
+}
+export type AllFormProps = PageProps & AllComponentProps;
+
+export interface PageData {
+  props: PageProps;
+  title: string;
 }
 
 export interface ComponentData {
@@ -29,6 +50,7 @@ export const testComponents: ComponentData[] = [
     name: "m-text",
     layerName: "图层1",
     props: {
+      ...textDefaultProps,
       text: "hello",
       fontSize: "12px",
       color: "#000000",
@@ -42,6 +64,7 @@ export const testComponents: ComponentData[] = [
     name: "m-text",
     layerName: "图层2",
     props: {
+      ...textDefaultProps,
       text: "hello2",
       fontSize: "20px",
       fontWeight: "bold",
@@ -54,6 +77,7 @@ export const testComponents: ComponentData[] = [
     name: "m-text",
     layerName: "图层3",
     props: {
+      ...textDefaultProps,
       text: "hello3",
       fontSize: "24px",
       textAlign: "right",
@@ -64,16 +88,30 @@ export const testComponents: ComponentData[] = [
     layerName: "图层4",
     name: "m-image",
     props: {
-      imageSrc: "https://monk-1251844408.cos.ap-nanjing.myqcloud.com/a.jpeg",
+      ...imageDefaultProps,
+      src: "https://monk-1251844408.cos.ap-nanjing.myqcloud.com/a.jpeg",
       width: "200",
     },
   },
 ];
 
+const pageDefaultProps = {
+  backgroundColor: "#ffffff",
+  backgroundImage:
+    "url('https://monk-1251844408.cos.ap-nanjing.myqcloud.com/a.jpeg')",
+  backgroundRepeat: "no-repeat",
+  backgroundSize: "cover",
+  height: "560px",
+};
+
 export const useEditor = defineStore("editor", {
   state: () => ({
     components: testComponents,
     currentElement: "",
+    page: {
+      props: pageDefaultProps,
+      title: "test title",
+    },
   }),
   actions: {
     addComponent(component: ComponentData) {
@@ -93,6 +131,9 @@ export const useEditor = defineStore("editor", {
           updateComponent.props[key as keyof TextComponentProps] = value;
         }
       }
+    },
+    updatePage({ key, value }) {
+      this.page.props[key as keyof PageProps] = value;
     },
   },
   getters: {

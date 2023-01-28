@@ -14,20 +14,22 @@
       <a-layout-content class="preview-container">
         <p>画布区域</p>
         <div class="preview-list" id="canvas-area">
-          <edit-wrapper
-            v-for="component in components"
-            :key="component.id"
-            :id="component.id"
-            @setActive="setActive"
-            :active="component.id === (currentElement && currentElement.id)"
-          >
-            <component
-              :is="component.name"
-              v-bind="component.props"
-              v-show="!component.isHidden"
+          <div class="body-container" :style="page.props">
+            <edit-wrapper
+              v-for="component in components"
+              :key="component.id"
+              :id="component.id"
+              @setActive="setActive"
+              :active="component.id === (currentElement && currentElement.id)"
             >
-            </component>
-          </edit-wrapper>
+              <component
+                :is="component.name"
+                v-bind="component.props"
+                v-show="!component.isHidden"
+              >
+              </component>
+            </edit-wrapper>
+          </div>
         </div>
       </a-layout-content>
     </a-layout>
@@ -39,11 +41,11 @@
       <a-tabs type="card" v-model:activeKey="activePanel">
         <a-tab-pane key="component" tab="组件属性">
           <div v-if="currentElement">
-            <props-table
+            <edit-group
               v-if="!currentElement.isLocked"
               :props="currentElement.props"
               @change="handleChange"
-            ></props-table>
+            ></edit-group>
             <div v-else>
               <a-empty>
                 <template #description>
@@ -61,6 +63,9 @@
             @select="setActive"
           ></layer-list>
         </a-tab-pane>
+        <a-tab-pane key="page" tab="页面设置">
+          <props-table :props="page.props" @change="pageChange"></props-table>
+        </a-tab-pane>
       </a-tabs>
     </a-layout-sider>
   </a-layout>
@@ -70,23 +75,26 @@
 import { defineComponent, computed, ref } from "vue";
 import { useEditor } from "@/stores/editor";
 import EditWrapper from "@/components/EditWrapper.vue";
-import PropsTable from "@/components/PropsTable.vue";
 import LayerList from "@/components/LayerList.vue";
+import EditGroup from "@/components/EditGroup.vue";
 import ComponentsList from "@/components/ComponentsList.vue";
 import { defaultTextTemplates } from "@/defaultTemplates";
 import StyleUploader from "@/components/StyleUploader.vue";
+import PropsTable from "@/components/PropsTable.vue";
 export type TabType = "component" | "layer" | "page";
 export default defineComponent({
   components: {
     ComponentsList,
     EditWrapper,
-    PropsTable,
     StyleUploader,
     LayerList,
+    EditGroup,
+    PropsTable,
   },
   setup() {
     const store = useEditor();
     const components = computed(() => store.components);
+    const page = computed(() => store.page);
     const activePanel = ref<TabType>("component");
     const currentElement = computed<any>(() => store.getCurrentElement);
     const addItem = (component: any) => {
@@ -98,14 +106,19 @@ export default defineComponent({
     const handleChange = (e: any) => {
       store.updateComponent(e);
     };
+    const pageChange = (e: any) => {
+      store.updatePage(e);
+    };
     return {
       components,
       defaultTextTemplates,
       currentElement,
       activePanel,
+      page,
       addItem,
       setActive,
       handleChange,
+      pageChange,
     };
   },
 });

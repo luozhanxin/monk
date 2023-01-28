@@ -40,7 +40,7 @@ export default defineComponent({
   props: {
     text: {
       type: String,
-      default: "上传背景图片",
+      default: "上传图片",
     },
     uploaded: {
       type: Object,
