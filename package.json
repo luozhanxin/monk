@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "ant-design-vue": "^3.2.15",
+    "array-move": "^4.0.0",
     "axios": "^1.2.2",
     "cropperjs": "^1.5.13",
     "lodash-es": "^4.17.21",
