@@ -1,4 +1,4 @@
-import type { TextComponentProps } from "./defaultProps";
+import type { TextComponentProps } from "monk-components";
 import type { VNode } from "vue";
 export interface PropToForm {
   component: string;
@@ -75,5 +75,12 @@ export const mapPropsToForms: PropsToForms = {
   color: {
     component: "color-picker",
     text: "字体颜色",
+  },
+  width: {
+    component: "a-input",
+    text: "宽度",
+  },
+  imageSrc: {
+    component: "image-process",
   },
 };

@@ -1,48 +1,59 @@
 <template>
-  <uploader-file
-    class="styled-uploader"
-    action="http://local.test:7001"
-    :showUploadList="false"
-    :beforeUpload="commonUploadCheck"
-    @success="
-      (data) => {
-        handleUploadSuccess(data.resp);
-      }
-    "
-  >
-    <div class="uploader-container">
-      <FileImageOutlined />
-      <h4>上传图片</h4>
-    </div>
-    <template #loading>
+  <div class="styled-upload-component">
+    <uploader
+      action="/utils/upload-img"
+      :beforeUpload="commonUploadCheck"
+      :uploaded="uploaded"
+      @file-uploaded="handleFileUploaded"
+    >
       <div class="uploader-container">
-        <LoadingOutlined />
-        <h4>上传中</h4>
+        <FileImageOutlined :style="{ fontSize: '30px' }" />
+        <h4>{{ text }}</h4>
       </div>
-    </template>
-    <template #uploaded>
-      <div class="uploader-container">
-        <FileImageOutlined />
-        <h4>上传图片</h4>
-      </div>
-    </template>
-  </uploader-file>
+      <template #loading>
+        <div class="uploader-container">
+          <LoadingOutlined :style="{ fontSize: '30px' }" spin />
+          <h4>上传中</h4>
+        </div>
+      </template>
+      <template #uploaded="dataProps">
+        <div class="uploader-container">
+          <img :src="dataProps.uploadedData.data.url" />
+        </div>
+      </template>
+    </uploader>
+  </div>
 </template>
 
 <script lang="ts">
-import { FileImageOutlined, LoadingOutlined } from "@ant-design/icons-vue";
 import { defineComponent } from "vue";
-import UploaderFile from "./UploaderFile.vue";
-import { commonUploadCheck } from "@/help";
+import { FileImageOutlined, LoadingOutlined } from "@ant-design/icons-vue";
+import { commonUploadCheck } from "../helper";
+import Uploader from "./UploaderFile.vue";
+
 export default defineComponent({
-  components: { FileImageOutlined, LoadingOutlined, UploaderFile },
+  components: {
+    Uploader,
+    FileImageOutlined,
+    LoadingOutlined,
+  },
+  props: {
+    text: {
+      type: String,
+      default: "上传背景图片",
+    },
+    uploaded: {
+      type: Object,
+    },
+  },
+  emits: ["file-uploaded"],
   setup(props, context) {
-    const handleUploadSuccess = (resp: any) => {
-      context.emit("success", resp);
+    const handleFileUploaded = (data: any) => {
+      context.emit("file-uploaded", data);
     };
     return {
       commonUploadCheck,
-      handleUploadSuccess,
+      handleFileUploaded,
     };
   },
 });

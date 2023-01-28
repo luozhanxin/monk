@@ -21,7 +21,11 @@
             @setActive="setActive"
             :active="component.id === (currentElement && currentElement.id)"
           >
-            <component :is="component.name" v-bind="component.props">
+            <component
+              :is="component.name"
+              v-bind="component.props"
+              v-show="!component.isHidden"
+            >
             </component>
           </edit-wrapper>
         </div>
@@ -32,36 +36,58 @@
       style="background: white"
       class="settings-panel"
     >
-      组件属性
-      <props-table
-        v-if="currentElement && currentElement.props"
-        :props="currentElement.props"
-        @change="handleChange"
-      ></props-table>
+      <a-tabs type="card" v-model:activeKey="activePanel">
+        <a-tab-pane key="component" tab="组件属性">
+          <div v-if="currentElement">
+            <props-table
+              v-if="!currentElement.isLocked"
+              :props="currentElement.props"
+              @change="handleChange"
+            ></props-table>
+            <div v-else>
+              <a-empty>
+                <template #description>
+                  <p>该元素被锁定，无法编辑</p>
+                </template>
+              </a-empty>
+            </div>
+          </div>
+        </a-tab-pane>
+        <a-tab-pane key="layer" tab="图层设置">
+          <layer-list
+            :list="components"
+            :selectedId="currentElement && currentElement.id"
+            @change="handleChange"
+            @select="setActive"
+          ></layer-list>
+        </a-tab-pane>
+      </a-tabs>
     </a-layout-sider>
   </a-layout>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import { useEditor } from "@/stores/editor";
 import EditWrapper from "@/components/EditWrapper.vue";
-import MText from "@/components/MText.vue";
 import PropsTable from "@/components/PropsTable.vue";
+import LayerList from "@/components/LayerList.vue";
 import ComponentsList from "@/components/ComponentsList.vue";
 import { defaultTextTemplates } from "@/defaultTemplates";
 import StyleUploader from "@/components/StyleUploader.vue";
+export type TabType = "component" | "layer" | "page";
 export default defineComponent({
   components: {
-    MText,
     ComponentsList,
     EditWrapper,
     PropsTable,
     StyleUploader,
+    LayerList,
   },
   setup() {
     const store = useEditor();
     const components = computed(() => store.components);
+    const activePanel = ref<TabType>("component");
     const currentElement = computed<any>(() => store.getCurrentElement);
     const addItem = (component: any) => {
       store.addComponent(component);
@@ -76,6 +102,7 @@ export default defineComponent({
       components,
       defaultTextTemplates,
       currentElement,
+      activePanel,
       addItem,
       setActive,
       handleChange,
