@@ -36,6 +36,9 @@ import type { PropType, VNode } from "vue";
 import RenderVnode from "./RenderVnode";
 import ColorPicker from "./ColorPicker.vue";
 import ImageProcess from "./ImageProcess.vue";
+import ShadowPicker from "@/components/ShadowPicker.vue";
+import BackgroundProcesser from "@/components/BackgroundProcesser.vue";
+import { AllComponentProps } from "monk-components";
 interface FormProps {
   component: string;
   subComponent?: string;
@@ -55,13 +58,15 @@ export default defineComponent({
   name: "props-table",
   props: {
     props: {
-      type: Object as PropType<TextComponentProps>,
+      type: Object as PropType<AllComponentProps>,
     },
   },
   components: {
     RenderVnode,
     ColorPicker,
     ImageProcess,
+    ShadowPicker,
+    BackgroundProcesser,
   },
   emits: ["change"],
   setup(props, context) {
