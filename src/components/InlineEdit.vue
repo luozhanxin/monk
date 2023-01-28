@@ -27,6 +27,12 @@ export default defineComponent({
   emits: ["change"],
   setup(props, context) {
     const innerValue = ref<string>(props.value);
+    watch(
+      () => props.value,
+      (newValue) => {
+        innerValue.value = newValue;
+      }
+    );
     const wrapper = ref<null | HTMLElement>(null);
     const inputRef = ref<null | HTMLElement>(null);
     const isEditing = ref(false);
