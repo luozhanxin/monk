@@ -81,7 +81,6 @@ import ComponentsList from "@/components/ComponentsList.vue";
 import { defaultTextTemplates } from "@/defaultTemplates";
 import StyleUploader from "@/components/StyleUploader.vue";
 import PropsTable from "@/components/PropsTable.vue";
-import { s } from "vitest/dist/index-5aad25c1";
 export type TabType = "component" | "layer" | "page";
 export default defineComponent({
   components: {

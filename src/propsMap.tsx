@@ -47,7 +47,7 @@ const pxToNumberHandler: PropToForm = {
   component: "a-input-number",
   initalTransform: (v: string) => parseInt(v),
   afterTransform: (e: number) => (e ? `${e}px` : ""),
-}
+};
 
 export const mapPropsToForms: PropsToForms = {
   text: {
@@ -125,10 +125,10 @@ export const mapPropsToForms: PropsToForms = {
     subComponent: "a-select-option",
     text: "边框类型",
     options: [
-      { value: "none", text: "无"},
-      { value: "solid", text: "实线"},
-      { value: "dashed", text: "破折线"},
-      { value: "dotted", text: "点状线"},
+      { value: "none", text: "无" },
+      { value: "solid", text: "实线" },
+      { value: "dashed", text: "破折线" },
+      { value: "dotted", text: "点状线" },
     ],
   },
   borderColor: {
@@ -180,7 +180,7 @@ export const mapPropsToForms: PropsToForms = {
     initalTransform(v: string) {
       if (v) {
         const reg = /\(["'](.+)["']\)/g;
-        const matches = reg.exec(v)
+        const matches = reg.exec(v);
         if (matches && matches.length > 1) {
           return matches[1];
         } else {
